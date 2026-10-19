@@ -35,10 +35,21 @@ def create_planet():
     return response, 201
 
 
-# Wave 3: Get all planets
+# Wave 3 and Wave 5 Get all planets with filters
 @planets_bp.get("")
 def get_all_planets():
-    query = db.select(Planet).order_by(Planet.id)
+    query = db.select(Planet)
+
+    description = request.args.get("description")
+    air_quality = request.args.get("air_quality")
+
+    if description:
+        query = query.where(Planet.description.ilike(f"%{description}%"))
+
+    if air_quality:
+        query = query.where(Planet.air_quality.ilike(f"%{air_quality}%"))
+
+    query = query.order_by(Planet.id)
     planets = db.session.scalars(query)
 
     planets_response = []
@@ -54,7 +65,6 @@ def get_all_planets():
         )
 
     return planets_response
-
 
 # Wave 2: Get one planet
 @planets_bp.get("/<planet_id>")
