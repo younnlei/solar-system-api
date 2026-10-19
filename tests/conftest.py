@@ -6,6 +6,8 @@ from flask.signals import request_finished
 from dotenv import load_dotenv
 import os
 
+from app.models.planet import Planet
+
 load_dotenv()
 
 
@@ -35,3 +37,18 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+from app.models.planet import Planet
+
+@pytest.fixture
+def one_planet(app):
+    planet = Planet(
+        name="Earth",
+        description="Our home planet",
+        air_quality="Breathable atmosphere"
+    )
+
+    db.session.add(planet)
+    db.session.commit()
+
+    return planet
