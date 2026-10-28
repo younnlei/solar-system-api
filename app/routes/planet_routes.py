@@ -93,3 +93,17 @@ def create_moon(planet_id):
     db.session.commit()
 
     return new_moon.to_dict(), 201
+
+# Wave 8: Get all moons for an existing planet
+@planets_bp.get("/<planet_id>/moons")
+def get_all_moons(planet_id):
+    planet = validate_model(Planet, planet_id)
+
+    moons = planet.moons
+
+    moons_response = []
+
+    for moon in moons:
+        moons_response.append(moon.to_dict())
+
+    return moons_response
