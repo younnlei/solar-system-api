@@ -1,5 +1,6 @@
 from flask import Blueprint, Response, request
 from app.models.planet import Planet
+from app.models.moon import Moon
 from app.db import db
 from app.route_utilities import validate_model
 
@@ -77,3 +78,18 @@ def delete_planet(planet_id):
     db.session.commit()
 
     return Response(status=204)
+
+# Wave 8: Create a moon for an existing planet
+@planets_bp.post("/<planet_id>/moons")
+def create_moon(planet_id):
+    planet = validate_model(Planet, planet_id)
+
+    request_body = request.get_json()
+
+    new_moon = Moon.from_dict(request_body)
+    new_moon.planet = planet
+
+    db.session.add(new_moon)
+    db.session.commit()
+
+    return new_moon.to_dict(), 201
